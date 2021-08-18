@@ -19,6 +19,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.preference.PreferenceFragmentCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -36,15 +37,20 @@ import static com.example.androidfinal.ui.movielist.MoviesListFragment.listMovie
 
 public class FavoriteFragment extends Fragment implements View.OnClickListener {
 
+    /*
+       keyword to shot movies to screen detail movies
+     */
     public static final String KEY_PASS_MOVIE = "KEY_PASS_MOVIES";
 
-    private FavoriteViewModel mFavoriteViewModel;
     private RecyclerView mRecyclerViewMovieFavorite;
     private AdapterMovie mAdapterMovieFavorite;
     private List<Movies> mListMoviesFavorite;
     private EditText mEdtSearchFavorite;
 
 
+    /*
+        fragment initialization
+     */
     public static FavoriteFragment newInstance() {
         FavoriteFragment fragment = new FavoriteFragment();
         return fragment;
@@ -60,25 +66,18 @@ public class FavoriteFragment extends Fragment implements View.OnClickListener {
     public void onResume() {
         super.onResume();
         mListMoviesFavorite.clear();
+        /*
+            Get movie list data from room
+         */
         mListMoviesFavorite = MoviesDatabase.getInstance(getContext()).moviesDAO().getListMovies();
-//        for(Movies mv:listMoviesAllApp){
-//            if(mv.isMovieFavorite()){
-//                mListMoviesFavorite.add(mv);
-//            }
-//        }
         mAdapterMovieFavorite = new AdapterMovie(mListMoviesFavorite, new AdapterMovie.onClickItemMovies() {
             @Override
             public void updateFavoriteMovies(Movies mv) {
-                if(mv.isMovieFavorite()){
-                    mv.setMovieFavorite(false);
-                }else{
-                    mv.setMovieFavorite(true);
-                }
-                mAdapterMovieFavorite.setData(mListMoviesFavorite);
+                updateMovie(mv);
             }
             @Override
             public void deleteFavoriteMovies(Movies mv) {
-                    alertDialog(mv);
+                    alertDialogDeleteMovies(mv);
                 }
         }, this, getContext());
         mRecyclerViewMovieFavorite.setLayoutManager(new GridLayoutManager(getContext(), 1));
@@ -86,10 +85,8 @@ public class FavoriteFragment extends Fragment implements View.OnClickListener {
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mFavoriteViewModel = new ViewModelProvider(this).get(FavoriteViewModel.class);
 
         View root = inflater.inflate(R.layout.fragment_favorite, container, false);
-
         mListMoviesFavorite = new ArrayList<>();
         mRecyclerViewMovieFavorite = root.findViewById(R.id.fragment_favorite_rcy);
         mEdtSearchFavorite = root.findViewById(R.id.fragment_favorite_edt_search);
@@ -111,23 +108,17 @@ public class FavoriteFragment extends Fragment implements View.OnClickListener {
                 mAdapterMovieFavorite = new AdapterMovie(listSearchMovie, new AdapterMovie.onClickItemMovies() {
                     @Override
                     public void updateFavoriteMovies(Movies mv) {
-                        if(mv.isMovieFavorite()){
-                            mv.setMovieFavorite(false);
-                        }else{
-                            mv.setMovieFavorite(true);
-                        }
-                        mAdapterMovieFavorite.setData(mListMoviesFavorite);
+                       updateMovie(mv);
                     }
-
                     @Override
                     public void deleteFavoriteMovies(Movies mv) {
-                        alertDialog(mv);
+                        alertDialogDeleteMovies(mv);
                     }
+
                 }, (View.OnClickListener) getContext(), getContext());
                 mAdapterMovieFavorite.setData(listSearchMovie);
                 mRecyclerViewMovieFavorite.setLayoutManager(new GridLayoutManager(getContext(), 1));
                 mRecyclerViewMovieFavorite.setAdapter(mAdapterMovieFavorite);
-
             }
 
             @Override
@@ -136,17 +127,11 @@ public class FavoriteFragment extends Fragment implements View.OnClickListener {
                     mAdapterMovieFavorite = new AdapterMovie(mListMoviesFavorite, new AdapterMovie.onClickItemMovies() {
                         @Override
                         public void updateFavoriteMovies(Movies mv) {
-                            if(mv.isMovieFavorite()){
-                                mv.setMovieFavorite(false);
-                            }else{
-                                mv.setMovieFavorite(true);
-                            }
-                            mAdapterMovieFavorite.setData(mListMoviesFavorite);
+                           updateMovie(mv);
                         }
-
                         @Override
                         public void deleteFavoriteMovies(Movies mv) {
-                           alertDialog(mv);
+                           alertDialogDeleteMovies(mv);
                         }
                     });
                     mRecyclerViewMovieFavorite.setLayoutManager(new GridLayoutManager(getContext(), 1));
@@ -157,7 +142,16 @@ public class FavoriteFragment extends Fragment implements View.OnClickListener {
         return root;
     }
 
-    private void alertDialog(Movies mv){
+    private void updateMovie(Movies mv){
+        if(mv.isMovieFavorite()){
+            mv.setMovieFavorite(false);
+        }else{
+            mv.setMovieFavorite(true);
+        }
+        mAdapterMovieFavorite.setData(mListMoviesFavorite);
+    }
+
+    private void alertDialogDeleteMovies(Movies mv){
         new AlertDialog.Builder(getContext())
                 .setTitle("ALERT VIEW TITLE")
                 .setMessage("Are you sure you want to remove this item from favourite ?")

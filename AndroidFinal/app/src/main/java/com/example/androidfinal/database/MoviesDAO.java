@@ -14,7 +14,7 @@ import java.util.List;
 public interface MoviesDAO {
 
     @Insert
-    void insertUser(Movies mv);
+    void insertMovies(Movies mv);
 
     @Query("SELECT * FROM movies")
     List<Movies> getListMovies();

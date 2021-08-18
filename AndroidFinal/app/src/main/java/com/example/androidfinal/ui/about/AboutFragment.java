@@ -23,7 +23,6 @@ import javax.security.auth.callback.Callback;
 
 public class AboutFragment extends Fragment {
 
-
     public static AboutFragment newInstance() {
         AboutFragment fragment = new AboutFragment();
         return fragment;

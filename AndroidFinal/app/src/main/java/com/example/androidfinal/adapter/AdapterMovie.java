@@ -121,11 +121,13 @@ public class AdapterMovie extends RecyclerView.Adapter<AdapterMovie.AdapterMovie
 
         public void setData(Movies movies){
             if(checkShow == 0){
+                String rating = "Rating: " + movies.getMovieRating()+"/10";
+                String releaseDate = "Date: " + movies.getMovieReleaseDate();
                 mTvNameMovie.setText(movies.getMovieTitle());
                 mTvDetailMovie.setText(movies.getMovieOverView());
                 mTvTypeMovie.setText(movies.getMovieType());
-                mTvRatingMovie.setText("Rating: " + movies.getMovieRating()+"/10");
-                mTvReleaseDateMovie.setText("Date: " + movies.getMovieReleaseDate());
+                mTvRatingMovie.setText(rating);
+                mTvReleaseDateMovie.setText(releaseDate);
                 Glide.with(mImgMovie).load(movies.getImgPoster()).into(mImgMovie);
                 if(movies.isMovieFavorite()){
                     mImgFavoriteMovie.setImageResource(R.drawable.star);

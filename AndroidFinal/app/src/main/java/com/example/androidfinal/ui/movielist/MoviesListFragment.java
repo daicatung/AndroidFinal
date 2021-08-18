@@ -65,7 +65,6 @@ public class MoviesListFragment extends Fragment implements View.OnClickListener
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater,ViewGroup container, Bundle savedInstanceState) {
-
         View root = inflater.inflate(R.layout.fragment_movies_list, container, false);
 
         CallApiMovie();
@@ -79,11 +78,14 @@ public class MoviesListFragment extends Fragment implements View.OnClickListener
                 updateMovie(mv);
             }
             @Override
-            public void deleteFavoriteMovies(Movies mv) {
-            }
+            public void deleteFavoriteMovies(Movies mv) {}
         }, this, getContext());
         return root;
     }
+
+    /*
+    Get data movie from API
+     */
     private void CallApiMovie() {
         ApiGetAllData.API_GET_ALL_DATA.getMovieApi(API_KEY, 1).enqueue(
                 new Callback<ApiGetListMovie>() {
@@ -198,7 +200,7 @@ public class MoviesListFragment extends Fragment implements View.OnClickListener
                 return;
             }
             mv.setMovieFavorite(true);
-            MoviesDatabase.getInstance(getContext()).moviesDAO().insertUser(mv);
+            MoviesDatabase.getInstance(getContext()).moviesDAO().insertMovies(mv);
             Toast.makeText(getContext(), "insert completed", Toast.LENGTH_SHORT).show();
         }
         mAdapterMovie.setData(listMoviesAllApp);

@@ -27,7 +27,6 @@ public class ReminderBroadcast extends BroadcastReceiver {
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onReceive(Context context, Intent intent) {
-
         Movies movies = (Movies) intent.getSerializableExtra("KEY_PASS_MOVIES");
         if(movies!=null){
             NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "notification")

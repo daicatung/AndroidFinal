@@ -51,9 +51,6 @@ public class DetailMovies extends AppCompatActivity {
     public static final String MY_LIST_MOVIE_REMINDER = "list reminder";
     public static final String KEY_GET_LIST_OBJECT_REMINDER = "key get list reminder";
 
-//    private  SharedPreferences sharedPreferences = this.getSharedPreferences(KEY_GET_LIST_OBJECT_REMINDER, Context.MODE_PRIVATE);
-//    private  SharedPreferences.Editor editor = sharedPreferences.edit();
-//    private List<Movies> mListMovieReminderSave = new ArrayList<>();
 
     private TextView mTvReleaseDate, mTvRating, mTvAdult, mTvOverview, mTvTimeReminder;
     private Button mBtnReminder;
@@ -100,7 +97,7 @@ public class DetailMovies extends AppCompatActivity {
                 if(isMoviesExit(mMoviesGetIntent)){
                     Toast.makeText(DetailMovies.this, "the movie has been repeated", Toast.LENGTH_SHORT).show();
                 }else{
-                    MoviesReminderDatabase.getInstance(DetailMovies.this).moviesDAO().insertUser(mMoviesGetIntent);
+                    MoviesReminderDatabase.getInstance(DetailMovies.this).moviesDAO().insertMovies(mMoviesGetIntent);
                 }
             }
         });
