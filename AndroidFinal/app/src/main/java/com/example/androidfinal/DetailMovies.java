@@ -31,6 +31,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.androidfinal.adapter.AdapterCast;
+import com.example.androidfinal.database.MoviesDatabase;
+import com.example.androidfinal.database.MoviesReminderDatabase;
 import com.example.androidfinal.model.Movies;
 import com.example.androidfinal.receiver.ReminderBroadcast;
 import com.google.gson.Gson;
@@ -45,7 +47,7 @@ public class DetailMovies extends AppCompatActivity {
 
     public static List<Movies> listMovieReminder = new ArrayList<>();
     public static final String KEY_PASS_MOVIES = "KEY_PASS_MOVIES";
-    public static final String CHANNEL_ID = "notification";
+
     public static final String MY_LIST_MOVIE_REMINDER = "list reminder";
     public static final String KEY_GET_LIST_OBJECT_REMINDER = "key get list reminder";
 
@@ -87,33 +89,19 @@ public class DetailMovies extends AppCompatActivity {
         mTvOverview.setText("Description: \n" + mMoviesGetIntent.getMovieOverView());
 
         setImgFavoriteDetail();
-
         mTvAdult.setText(mMoviesGetIntent.getMovieType());
-
         Glide.with(mImgMovie).load(mMoviesGetIntent.getImgPoster()).into(mImgMovie);
-
         mBtnReminder.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onClick(View v) {
                 listMovieReminder.add(mMoviesGetIntent);
-//                SharedPreferences.Editor editor = getSharedPreferences(MY_LIST_MOVIE_REMINDER, MODE_PRIVATE).edit();
-//                Gson gson = new Gson();
-//                String json = gson.toJson(mMoviesGetIntent);
-//                editor.putString(KEY_GET_LIST_OBJECT_REMINDER, json);
-//                editor.commit();
-
                 Toast.makeText(DetailMovies.this, "Reminder set!", Toast.LENGTH_SHORT).show();
-
-                createNotificationChannel();
-                Intent intent = new Intent(DetailMovies.this, ReminderBroadcast.class);
-                intent.putExtra("KEY_PASS_MOVIES", mMoviesGetIntent);
-                sendBroadcast(intent);
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(DetailMovies.this, 0, intent, 0);
-                AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-                alarmManager.set(AlarmManager.RTC_WAKEUP
-                        , mMoviesGetIntent.getTimeReminder()
-                        , pendingIntent);
+                if(isMoviesExit(mMoviesGetIntent)){
+                    Toast.makeText(DetailMovies.this, "the movie has been repeated", Toast.LENGTH_SHORT).show();
+                }else{
+                    MoviesReminderDatabase.getInstance(DetailMovies.this).moviesDAO().insertUser(mMoviesGetIntent);
+                }
             }
         });
         mTvTimeReminder.setOnClickListener(new View.OnClickListener() {
@@ -121,11 +109,6 @@ public class DetailMovies extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 chooseTimeReminder();
-                SimpleDateFormat formatDate = new SimpleDateFormat("yyyy/MM/dd-HH:mm", Locale.getDefault());
-                mTvTimeReminder.setText(formatDate.format(mCalendar.getTime()));
-                mMoviesGetIntent.setTimeReminder(mCalendar.getTimeInMillis());
-                mMoviesGetIntent.setTimeReminderDisplay(formatDate.format(mCalendar.getTime()));
-                Log.d("TAG", "onClick: " + formatDate.format(mCalendar.getTime()));
             }
         });
     }
@@ -182,6 +165,11 @@ public class DetailMovies extends AppCompatActivity {
                                         mCalendar.set(Calendar.HOUR_OF_DAY, h);
                                         mCalendar.set(Calendar.MINUTE, min);
                                         value[0] = mCalendar.getTime();
+                                        SimpleDateFormat formatDate = new SimpleDateFormat("yyyy/MM/dd-HH:mm", Locale.getDefault());
+                                        mTvTimeReminder.setText(formatDate.format(mCalendar.getTime()));
+                                        mMoviesGetIntent.setTimeReminder(mCalendar.getTimeInMillis());
+                                        Log.d("TAG", "onTimeSet: " + mCalendar.getTimeInMillis() + ":" + System.currentTimeMillis());
+                                        mMoviesGetIntent.setTimeReminderDisplay(formatDate.format(mCalendar.getTime()));
                                     }
                                 }, mCalendar.get(Calendar.HOUR_OF_DAY),
                                 mCalendar.get(Calendar.MINUTE), true).show();
@@ -190,22 +178,11 @@ public class DetailMovies extends AppCompatActivity {
                 mCalendar.get(Calendar.DAY_OF_MONTH)).show();
     }
 
-    private void createNotificationChannel(){
-        if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.O){
-            CharSequence name = "name";
-            String des = "des";
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
-            channel.setDescription(des);
 
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
+
+    private boolean isMoviesExit(Movies mv){
+        List<Movies> list = MoviesReminderDatabase.getInstance(this).moviesDAO().checkMovies(mv.getMovieTitle());
+        return list!=null && !list.isEmpty();
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-//        editor.putString(KEY_GET_LIST_OBJECT_REMINDER, new Gson().toJson(mListMovieReminderSave)).apply();
-    }
 }

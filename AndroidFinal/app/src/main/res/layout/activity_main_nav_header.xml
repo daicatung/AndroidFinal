@@ -81,14 +81,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="#5c77d6"
-        android:layout_margin="16dp"/>
+        android:layout_marginLeft="16dp" />
 
     <TextView
         android:id="@+id/nav_header_main_tv_mv2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:textColor="#5c77d6"/>
+        android:textColor="#5c77d6"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="16dp"/>
 
     <Button
         android:id="@+id/nav_header_main_btn_show_all"
@@ -97,12 +98,8 @@
         android:layout_gravity="center"
         android:backgroundTint="#635f5b"
         android:text="Show all"
-        android:layout_margin="32dp"
         android:textAllCaps="false" />
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"/>
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -192,7 +192,9 @@ public class MoviesListFragment extends Fragment implements View.OnClickListener
             Toast.makeText(getContext(), "Delete Movies complete", Toast.LENGTH_SHORT).show();
         }else{
             if(isMoviesExit(mv)){
+                mv.setMovieFavorite(true);
                 Toast.makeText(getContext(), "Movies is already list favorite", Toast.LENGTH_SHORT).show();
+                mAdapterMovie.setData(listMoviesAllApp);
                 return;
             }
             mv.setMovieFavorite(true);

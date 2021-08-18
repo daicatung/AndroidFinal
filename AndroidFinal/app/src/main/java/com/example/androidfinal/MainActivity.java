@@ -1,9 +1,14 @@
 package com.example.androidfinal;
 
+import android.app.AlarmManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
@@ -14,8 +19,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.androidfinal.adapter.AdapterViewPage;
+import com.example.androidfinal.database.MoviesReminderDatabase;
 import com.example.androidfinal.model.Movies;
 import com.example.androidfinal.model.User;
+import com.example.androidfinal.receiver.ReminderBroadcast;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
@@ -37,7 +44,7 @@ import java.util.List;
 import static com.example.androidfinal.DetailMovies.listMovieReminder;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
-
+    public static final String CHANNEL_ID = "notification";
     public static final String KEY_GET_LIST_OBJECT_REMINDER = "key get list reminder";
     public static final String KEY_SHARE_SAVE_DATA = "MyObjectUser";
     private AppBarConfiguration mAppBarConfiguration;
@@ -142,22 +149,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             mTvSexUser.setText(gt);
         }
 
+        List<Movies> list = MoviesReminderDatabase.getInstance(this).moviesDAO().getListMovies();
 
-        if(listMovieReminder.size()==1){
-            mTvReminderList1.setText(listMovieReminder.get(0).getMovieTitle() + " "
-                                    +listMovieReminder.get(0).getMovieReleaseDate() + " "
-                                    +listMovieReminder.get(0).getMovieRating()+"/10 +\n"
-                                    +listMovieReminder.get(0).getTimeReminderDisplay());
-        }else if(listMovieReminder.size()>1){
-            mTvReminderList1.setText(listMovieReminder.get(0).getMovieTitle()+ " "
-                    + listMovieReminder.get(0).getMovieReleaseDate()+ " "
-                    +listMovieReminder.get(0).getMovieRating()+"/10 +\n"
-                    +listMovieReminder.get(0).getTimeReminderDisplay());
+        for(int i=0; i<list.size(); ++i){
+            createNotificationChannel();
+            Intent intent = new Intent(MainActivity.this, ReminderBroadcast.class);
+            intent.putExtra("KEY_PASS_MOVIES", list.get(i));
+            sendBroadcast(intent);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, intent, 0);
+            AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+            alarmManager.set(AlarmManager.RTC_WAKEUP
+                    ,  list.get(i).getTimeReminder() + 10000
+                    , pendingIntent);
+        }
 
-            mTvReminderList2.setText(listMovieReminder.get(1).getMovieTitle()+ " "
-                    + listMovieReminder.get(1).getMovieReleaseDate()+ " "
-                    +listMovieReminder.get(1).getMovieRating()+"/10 +\n"
-                    +listMovieReminder.get(1).getTimeReminderDisplay());
+        if(list.size()==1){
+            mTvReminderList1.setText(list.get(0).getMovieTitle() + " "
+                                    +list.get(0).getMovieReleaseDate() + " "
+                                    +list.get(0).getMovieRating()+"/10 +\n"
+                                    +list.get(0).getTimeReminderDisplay());
+        }else if(list.size()>1){
+            mTvReminderList1.setText(list.get(0).getMovieTitle()+ " "
+                    + list.get(0).getMovieReleaseDate()+ " "
+                    +list.get(0).getMovieRating()+"/10 +\n"
+                    +list.get(0).getTimeReminderDisplay());
+
+            mTvReminderList2.setText(list.get(1).getMovieTitle()+ " "
+                    + list.get(1).getMovieReleaseDate()+ " "
+                    +list.get(1).getMovieRating()+"/10 +\n"
+                    +list.get(1).getTimeReminderDisplay());
         }
     }
 
@@ -208,5 +228,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         public void onTabReselected(TabLayout.Tab tab) {}
+    }
+
+    private void createNotificationChannel(){
+        if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.O){
+            CharSequence name = "name";
+            String des = "des";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(des);
+
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 }

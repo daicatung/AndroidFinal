@@ -13,7 +13,9 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.graphics.drawable.IconCompat;
 
+import com.example.androidfinal.DetailMovies;
 import com.example.androidfinal.R;
+import com.example.androidfinal.database.MoviesReminderDatabase;
 import com.example.androidfinal.model.Movies;
 
 import java.io.IOException;
@@ -36,6 +38,7 @@ public class ReminderBroadcast extends BroadcastReceiver {
             NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
 
             notificationManagerCompat.notify(200, builder.build());
+            //MoviesReminderDatabase.getInstance(context).moviesDAO().deleteMovies(movies);
         }
 
     }

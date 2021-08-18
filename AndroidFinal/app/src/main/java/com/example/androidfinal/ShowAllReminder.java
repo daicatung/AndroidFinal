@@ -12,7 +12,10 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.example.androidfinal.adapter.AdapterMovieReminder;
+import com.example.androidfinal.database.MoviesReminderDatabase;
 import com.example.androidfinal.model.Movies;
+
+import java.util.List;
 
 import static com.example.androidfinal.DetailMovies.listMovieReminder;
 
@@ -36,7 +39,8 @@ public class ShowAllReminder extends AppCompatActivity implements View.OnClickLi
     @Override
     protected void onResume() {
         super.onResume();
-        mAdapterMovieReminder = new AdapterMovieReminder(listMovieReminder, (View.OnClickListener) ShowAllReminder.this);
+        List<Movies> list = MoviesReminderDatabase.getInstance(this).moviesDAO().getListMovies();
+        mAdapterMovieReminder = new AdapterMovieReminder(list, (View.OnClickListener) ShowAllReminder.this);
         mRecyclerViewReminder.setLayoutManager(new GridLayoutManager(this, 1));
         mRecyclerViewReminder.setAdapter(mAdapterMovieReminder);
     }
