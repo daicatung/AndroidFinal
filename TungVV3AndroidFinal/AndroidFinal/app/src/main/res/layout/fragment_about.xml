@@ -4,11 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.setting.SettingFragment">
-    <FrameLayout
-        android:id="@+id/settingsFragment"
+    tools:context=".ui.favorite.FavoriteFragment">
+
+    <WebView
+        android:id="@+id/fragment_about_web_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
-        android:layout_marginBottom="70dp"/>
+        android:layout_margin="@dimen/dp_8"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

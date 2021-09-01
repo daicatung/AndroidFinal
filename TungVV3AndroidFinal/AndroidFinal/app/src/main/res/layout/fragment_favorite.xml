@@ -10,8 +10,8 @@
     android:id="@+id/fragment_favorite_edt_search"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="16dp"
-    android:padding="10dp"
+    android:layout_margin="@dimen/dp_16"
+    android:padding="@dimen/dp_10"
     android:hint="@string/type_a_keyword_to_search"
     android:drawableLeft="@drawable/search_item_movie"
     android:background="@drawable/custom_edit_text_search"/>

@@ -38,4 +38,11 @@
     <string name="attachment_summary_on">Automatically download attachments for incoming emails
     </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="reminder">Reminder</string>
+    <string name="cast_and_crew">Cast and Crew</string>
+    <string name="cancel">Cancel</string>
+    <string name="name">Name</string>
+    <string name="name_cast">name cast</string>
+    <string name="movie_type">Movie Type</string>
+    <string name="time_real">Time real</string>
 </resources>

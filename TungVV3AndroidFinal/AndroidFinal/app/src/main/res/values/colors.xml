@@ -7,4 +7,8 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="background_detail_movies">#2c3949</color>
+    <color name="color_btn_detail_movies">#2196F3</color>
+    <color name="color_tv_detail_reminder">#de184d</color>
+    <color name="color_background_app_bar">#141414</color>
 </resources>
